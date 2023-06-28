@@ -30,10 +30,10 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         script: |
-        cd /home/ubuntu/entorno-sesion-8
-        git pull
-        sudo docker compose down
-        docker rmi entorno-sesion-8-app
-        mvn package -DskipTests
-        sudo docker compose up -d
+          cd /home/ubuntu/entorno-sesion-8
+          git pull
+          sudo docker compose down
+          docker rmi entorno-sesion-8-app
+          mvn package -DskipTests
+          sudo docker compose up -d
       
