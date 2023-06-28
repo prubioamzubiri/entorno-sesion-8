@@ -9,26 +9,12 @@ jobs:
   continuous-deployment:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - run: mvn package -DskipTests
-    - name: Login to DockerHub
-      uses: docker/login-action@v1 
-      with:
-        username: ${{secrets.DOCKERHUB_USERNAME}}
-        password: ${{secrets.DOCKERHUB_PASSWORD}}
-    - name: Build and push
-      id: docker_build
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        push: true
-        tags: prubioam/practica-cloud-java-2022-2023:v123
     - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@v0.1.10
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
+        key: ${{ secrets.PASSWORD }}
         script: |
           cd /home/ubuntu/entorno-sesion-8
           git pull
