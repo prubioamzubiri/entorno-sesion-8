@@ -9,17 +9,39 @@ jobs:
   continuous-deployment:
     runs-on: ubuntu-latest
     steps:
-    - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.PASSWORD }}
-        script: |
-          cd /home/ubuntu/entorno-sesion-8
-          git pull
-          sudo docker compose down
-          sudo docker rmi entorno-sesion-8-app
-          mvn package -DskipTests
-          sudo docker compose up -d
+      - uses: actions/checkout@v1
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+#      - name: Set up JDK 17
+#        uses: actions/setup-java@v3.6.0
+#        with:
+#          java-version: 13
+#          distribution: adopt
+      - name: Maven Package without test
+        run: mvn -B clean package -DskipTests
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_PASSWORD}}
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: prubioam/practica-cloud-java-2022-2023:${{ env.RELEASE_VERSION }}
+#    - name: executing remote ssh commands using password
+#      uses: appleboy/ssh-action@v0.1.10
+#      with:
+#        host: ${{ secrets.HOST }}
+#        username: ${{ secrets.USERNAME }}
+#        key: ${{ secrets.PASSWORD }}
+#        script: |
+#          cd /home/ubuntu/entorno-sesion-8
+#          git pull
+#          sudo docker compose down
+#          sudo docker rmi entorno-sesion-8-app
+#          mvn package -DskipTests
+#          sudo docker compose up -d
       
